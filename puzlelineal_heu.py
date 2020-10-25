@@ -1,0 +1,48 @@
+# Puzle Lineal con busqueda en profundidad (DEPTH FIRST SEARCH) Recuersivo para prescindir de la lista de frontera
+from arbol import Nodo
+
+def buscar_solucion_Heuristica(nodo_inicial, solucion,visitados):
+    visitados.append(nodo_inicial.getDatos())
+    if nodo_inicial.getDatos()== solucion:
+        #Solcuion encontrada
+        return nodo_inicial
+    else:
+        #expandir nodos hijos
+        dato_nodo= nodo_inicial.getDatos()
+        hijo = [dato_nodo[1],dato_nodo[0],dato_nodo[2],dato_nodo[3]]
+        hijo_izquierdo = Nodo(hijo)
+        hijo=[dato_nodo[0],dato_nodo[2],dato_nodo[1],dato_nodo[3]]
+        hijo_central = Nodo(hijo)
+        hijo=[dato_nodo[0],dato_nodo[1],dato_nodo[3],dato_nodo[2]]
+        hijo_derecho = Nodo(hijo)
+        nodo_inicial.setHijos([hijo_izquierdo,hijo_central,hijo_derecho])
+        for nodo_hijo in nodo_inicial.getHijos():
+            if (not nodo_hijo.getDatos() in visitados) and (mejora(nodo_inicial,nodo_hijo)):
+                # llamada recursiva
+                sol=buscar_solucion_Heuristica(nodo_hijo,solucion,visitados)
+                if sol!=None:
+                    return sol
+        return None
+def mejora (nodo_padre, nodo_hijo):
+    calidad_padre= 0
+    calidad_hijo=0
+    dato_padre= nodo_padre.getDatos()
+    dato_hijo= nodo_hijo.getDatos()
+    for n in range (1,len(dato_padre)):
+        if (dato_padre[n]>dato_padre[n-1]):
+            calidad_padre= calidad_padre+1
+        if (dato_hijo[n]>dato_hijo[n-1]):
+            calidad_hijo= calidad_hijo+1
+    if calidad_hijo>=calidad_padre:
+        return True
+    else:
+        return False
+
+if __name__=="__main__":
+    estado_inicial= [4,2,3,1]
+    solucion= [1,2,3,4]
+    visitados = []
+    nodo_inicial = Nodo(estado_inicial)
+    #mostrar resultado
+    nodo=buscar_solucion_Heuristica(nodo_inicial,solucion,visitados)
+    print (nodo.mostrarRecorrido(estado_inicial))
